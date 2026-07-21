@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Citavel — Diagnóstico SEO · AEO · GEO grátis</title>
+<style>
+  :root {
+    --bg: #0b0e14;
+    --surface: #131826;
+    --surface-2: #1a2136;
+    --border: #252d45;
+    --text: #e8ecf6;
+    --muted: #8a94ad;
+    --accent: #6c8cff;
+    --accent-2: #9d6cff;
+    --ok: #3ecf8e;
+    --warn: #f5b83d;
+    --err: #f56565;
+    --radius: 14px;
+    font-size: 16px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    min-height: 100vh;
+    line-height: 1.55;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 48px 20px 80px; }
+
+  header { text-align: center; margin-bottom: 40px; }
+  .logo {
+    font-size: 1.9rem; font-weight: 800; letter-spacing: -0.5px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    display: inline-block;
+  }
+  .tagline { color: var(--muted); margin-top: 6px; font-size: 1.05rem; }
+  .badges { margin-top: 14px; display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+  .badge {
+    font-size: .75rem; font-weight: 600; padding: 4px 12px; border-radius: 99px;
+    border: 1px solid var(--border); color: var(--muted); background: var(--surface);
+  }
+
+  form { display: flex; gap: 10px; margin-bottom: 8px; }
+  input[type="url"], input[type="text"] {
+    flex: 1; padding: 15px 18px; font-size: 1rem; color: var(--text);
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); outline: none; transition: border-color .15s;
+  }
+  input:focus { border-color: var(--accent); }
+  button {
+    padding: 15px 28px; font-size: 1rem; font-weight: 700; cursor: pointer;
+    color: #fff; border: none; border-radius: var(--radius);
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    transition: opacity .15s;
+  }
+  button:hover { opacity: .9; }
+  button:disabled { opacity: .5; cursor: wait; }
+  .hint { color: var(--muted); font-size: .85rem; text-align: center; margin-bottom: 36px; }
+
+  #loading { display: none; text-align: center; padding: 48px 0; color: var(--muted); }
+  .spinner {
+    width: 42px; height: 42px; margin: 0 auto 16px; border-radius: 50%;
+    border: 3px solid var(--border); border-top-color: var(--accent);
+    animation: spin .8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  #erro {
+    display: none; background: rgba(245,101,101,.08); border: 1px solid rgba(245,101,101,.35);
+    color: #ffb4b4; padding: 14px 18px; border-radius: var(--radius); margin-bottom: 24px;
+  }
+
+  #resultado { display: none; }
+  .score-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 32px; display: flex; align-items: center; gap: 32px; margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .gauge { position: relative; width: 140px; height: 140px; flex-shrink: 0; }
+  .gauge svg { transform: rotate(-90deg); }
+  .gauge .num {
+    position: absolute; inset: 0; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+  }
+  .gauge .num b { font-size: 2.4rem; line-height: 1; }
+  .gauge .num span { font-size: .7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+  .score-info { flex: 1; min-width: 240px; }
+  .score-info h2 { font-size: 1.25rem; margin-bottom: 4px; word-break: break-word; }
+  .score-info .url { color: var(--muted); font-size: .85rem; word-break: break-all; margin-bottom: 14px; }
+  .veredicto { font-size: 1rem; }
+  .cats { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+  .cat {
+    background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px;
+    padding: 10px 16px; text-align: center; min-width: 86px;
+  }
+  .cat b { font-size: 1.3rem; display: block; }
+  .cat span { font-size: .72rem; color: var(--muted); letter-spacing: .5px; }
+
+  .share-row { display: flex; gap: 10px; margin-bottom: 32px; flex-wrap: wrap; }
+  .share-row button {
+    background: var(--surface); border: 1px solid var(--border); color: var(--text);
+    font-size: .9rem; padding: 11px 18px; font-weight: 600;
+  }
+  .share-row button:hover { border-color: var(--accent); opacity: 1; }
+
+  .checks h3 {
+    font-size: .8rem; text-transform: uppercase; letter-spacing: 1.5px;
+    color: var(--muted); margin: 28px 0 12px;
+  }
+  .check {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 16px 18px; margin-bottom: 10px; display: flex; gap: 14px; align-items: flex-start;
+  }
+  .check .dot {
+    width: 10px; height: 10px; border-radius: 50%; margin-top: 7px; flex-shrink: 0;
+  }
+  .check.ok .dot { background: var(--ok); }
+  .check.aviso .dot { background: var(--warn); }
+  .check.erro .dot { background: var(--err); }
+  .check .body { flex: 1; }
+  .check .top { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+  .check b { font-size: .98rem; }
+  .check .tag {
+    font-size: .68rem; font-weight: 700; letter-spacing: 1px; padding: 2px 9px;
+    border-radius: 99px; background: var(--surface-2); color: var(--muted);
+  }
+  .check p { font-size: .9rem; color: var(--muted); margin-top: 3px; }
+  .check .dica {
+    margin-top: 8px; font-size: .87rem; color: var(--text);
+    background: var(--surface-2); border-left: 3px solid var(--accent);
+    padding: 8px 12px; border-radius: 0 8px 8px 0;
+  }
+
+  .cta {
+    margin-top: 40px; background: linear-gradient(135deg, rgba(108,140,255,.12), rgba(157,108,255,.12));
+    border: 1px solid rgba(108,140,255,.35); border-radius: var(--radius);
+    padding: 28px; text-align: center;
+  }
+  .cta h3 { font-size: 1.2rem; margin-bottom: 8px; }
+  .cta p { color: var(--muted); max-width: 520px; margin: 0 auto 18px; font-size: .95rem; }
+
+  footer { margin-top: 60px; text-align: center; color: var(--muted); font-size: .8rem; }
+  @media (max-width: 560px) {
+    form { flex-direction: column; }
+    .score-card { flex-direction: column; text-align: center; }
+    .cats { justify-content: center; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo">Citavel</div>
+    <div class="tagline">Seu site é encontrado pelo Google — e citado pelas IAs?</div>
+    <div class="badges">
+      <span class="badge">SEO · Google</span>
+      <span class="badge">AEO · Featured Snippets</span>
+      <span class="badge">GEO · ChatGPT &amp; Perplexity</span>
+      <span class="badge">Grátis, sem cadastro</span>
+    </div>
+    <div style="margin-top:14px;">
+      <a href="/painel.html" style="color:var(--muted); font-size:.85rem; text-decoration:none;">Já é cliente? <span style="color:var(--accent); font-weight:700;">Abrir painel →</span></a>
+    </div>
+  </header>
+
+  <form id="form">
+    <input type="text" id="url" placeholder="www.seusite.com.br" required autocomplete="off">
+    <button type="submit" id="btn">Diagnosticar</button>
+  </form>
+  <div class="hint">Análise em ~15 segundos · 27 verificações técnicas · nenhum dado seu é coletado</div>
+
+  <div id="erro"></div>
+
+  <div id="loading">
+    <div class="spinner"></div>
+    <div id="loading-msg">Acessando o site…</div>
+  </div>
+
+  <div id="resultado">
+    <div class="score-card">
+      <div class="gauge">
+        <svg width="140" height="140" viewBox="0 0 140 140">
+          <circle cx="70" cy="70" r="60" fill="none" stroke="var(--border)" stroke-width="12"/>
+          <circle id="arc" cx="70" cy="70" r="60" fill="none" stroke="var(--ok)" stroke-width="12"
+                  stroke-linecap="round" stroke-dasharray="377" stroke-dashoffset="377"
+                  style="transition: stroke-dashoffset 1s ease, stroke .5s"/>
+        </svg>
+        <div class="num"><b id="nota">–</b><span>de 100</span></div>
+      </div>
+      <div class="score-info">
+        <h2 id="site-titulo"></h2>
+        <div class="url" id="site-url"></div>
+        <div class="veredicto" id="veredicto"></div>
+        <div class="cats">
+          <div class="cat"><b id="cat-seo">–</b><span>SEO</span></div>
+          <div class="cat"><b id="cat-aeo">–</b><span>AEO</span></div>
+          <div class="cat"><b id="cat-geo">–</b><span>GEO</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="share-row">
+      <button id="copiar">📋 Copiar resultado</button>
+      <button id="whatsapp">💬 Compartilhar no WhatsApp</button>
+      <button id="kit">🔧 Kit de correção</button>
+    </div>
+
+    <div class="checks">
+      <div id="lista-problemas"></div>
+    </div>
+
+    <div class="cta" id="cta">
+      <h3 id="cta-titulo">Quer que a gente corrija isso por você?</h3>
+      <p id="cta-sub">O Citavel gera automaticamente posts de blog que fecham exatamente os gaps
+         encontrados acima — publicados direto no seu site, na sua identidade visual.</p>
+      <div id="pauta" style="display:none; text-align:left; max-width:560px; margin: 0 auto 22px;">
+        <div style="font-size:.78rem; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); margin-bottom:10px;">
+          📝 Pauta que já geraríamos para o seu site
+        </div>
+        <ol id="pauta-lista" style="margin:0; padding-left:22px;"></ol>
+      </div>
+      <button id="cta-painel">Quero esses posts no meu site →</button>
+    </div>
+  </div>
+
+  <footer>Citavel · diagnóstico técnico Camada 1 (determinístico) — protótipo MVP</footer>
+</div>
+
+<script>
+const form = document.getElementById("form");
+const btn = document.getElementById("btn");
+const loading = document.getElementById("loading");
+const loadingMsg = document.getElementById("loading-msg");
+const erroBox = document.getElementById("erro");
+const resultado = document.getElementById("resultado");
+let ultimoResultado = null;
+
+const MSGS = [
+  "Acessando o site…",
+  "Lendo robots.txt e sitemap…",
+  "Analisando títulos e meta tags…",
+  "Procurando dados estruturados…",
+  "Avaliando citabilidade para IAs…",
+];
+
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const url = document.getElementById("url").value.trim();
+  if (!url) return;
+
+  erroBox.style.display = "none";
+  resultado.style.display = "none";
+  loading.style.display = "block";
+  btn.disabled = true;
+
+  let i = 0;
+  loadingMsg.textContent = MSGS[0];
+  const ticker = setInterval(() => {
+    i = Math.min(i + 1, MSGS.length - 1);
+    loadingMsg.textContent = MSGS[i];
+  }, 2000);
+
+  try {
+    const r = await fetch("/api/diagnostico", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ url }),
+    });
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.erro || "Erro inesperado");
+    render(data);
+  } catch (err) {
+    erroBox.textContent = "⚠️ " + err.message;
+    erroBox.style.display = "block";
+  } finally {
+    clearInterval(ticker);
+    loading.style.display = "none";
+    btn.disabled = false;
+  }
+});
+
+function corNota(n) {
+  return n >= 70 ? "var(--ok)" : n >= 45 ? "var(--warn)" : "var(--err)";
+}
+function emojiNota(n) {
+  return n >= 85 ? "🏆" : n >= 70 ? "✅" : n >= 45 ? "😬" : "🚨";
+}
+function veredictoNota(n) {
+  if (n >= 85) return "Excelente — seu site está pronto para buscadores e IAs.";
+  if (n >= 70) return "Bom, mas há pontos que valem atenção.";
+  if (n >= 45) return "Mediano — problemas reais estão limitando sua visibilidade.";
+  return "Crítico — seu site está praticamente invisível para buscadores e IAs.";
+}
+
+function render(data) {
+  ultimoResultado = data;
+  document.getElementById("site-titulo").textContent = data.titulo;
+  document.getElementById("site-url").textContent = data.url;
+  document.getElementById("nota").textContent = data.nota;
+  document.getElementById("veredicto").textContent = emojiNota(data.nota) + " " + veredictoNota(data.nota);
+  document.getElementById("cat-seo").textContent = data.porCategoria.SEO;
+  document.getElementById("cat-aeo").textContent = data.porCategoria.AEO;
+  document.getElementById("cat-geo").textContent = data.porCategoria.GEO;
+
+  const arc = document.getElementById("arc");
+  arc.style.stroke = corNota(data.nota);
+  requestAnimationFrame(() => {
+    arc.style.strokeDashoffset = 377 - (377 * data.nota) / 100;
+  });
+
+  const lista = document.getElementById("lista-problemas");
+  lista.innerHTML = "";
+  const grupos = [
+    ["erro", "🚨 Problemas críticos"],
+    ["aviso", "⚠️ Pontos de atenção"],
+    ["ok", "✅ O que já está certo"],
+  ];
+  for (const [status, label] of grupos) {
+    const itens = data.checks.filter((c) => c.status === status);
+    if (!itens.length) continue;
+    const h = document.createElement("h3");
+    h.textContent = `${label} (${itens.length})`;
+    lista.appendChild(h);
+    for (const c of itens) {
+      const div = document.createElement("div");
+      div.className = "check " + c.status;
+      div.innerHTML = `
+        <div class="dot"></div>
+        <div class="body">
+          <div class="top"><b></b><span class="tag"></span></div>
+          <p></p>
+          ${c.dica ? '<div class="dica"></div>' : ""}
+        </div>`;
+      div.querySelector("b").textContent = c.titulo;
+      div.querySelector(".tag").textContent = c.categoria;
+      div.querySelector("p").textContent = c.detalhe;
+      if (c.dica) div.querySelector(".dica").textContent = "💡 " + c.dica;
+      lista.appendChild(div);
+    }
+  }
+
+  // Pauta automática — os gaps viram a proposta concreta da fase paga
+  const pauta = document.getElementById("pauta");
+  const pautaLista = document.getElementById("pauta-lista");
+  pautaLista.innerHTML = "";
+  if (data.gaps && data.gaps.length > 0) {
+    for (const g of data.gaps.slice(0, 6)) {
+      const li = document.createElement("li");
+      li.style.cssText =
+        "padding:8px 0; font-size:.92rem; color:var(--text); display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;";
+      const span = document.createElement("span");
+      span.textContent = g.titulo;
+      span.style.flex = "1";
+      const link = document.createElement("a");
+      link.textContent = "Gerar post →";
+      link.href =
+        "/post.html?url=" + encodeURIComponent(data.url) + "&gap=" + encodeURIComponent(g.id);
+      link.style.cssText =
+        "color:var(--accent); font-weight:700; font-size:.85rem; text-decoration:none; white-space:nowrap; border:1px solid var(--border); padding:5px 12px; border-radius:99px;";
+      li.appendChild(span);
+      li.appendChild(link);
+      pautaLista.appendChild(li);
+    }
+    document.getElementById("cta-titulo").textContent =
+      `Encontramos ${data.gaps.length} pautas de conteúdo que seu site precisa`;
+    document.getElementById("cta-sub").textContent =
+      "Clique em uma pauta para ver o post que geramos — pronto para colar no seu site. Na versão paga, isso acontece sozinho, direto no seu blog.";
+    pauta.style.display = "block";
+  } else {
+    pauta.style.display = "none";
+  }
+
+  resultado.style.display = "block";
+  resultado.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function textoCompartilhavel() {
+  const d = ultimoResultado;
+  const erros = d.checks.filter((c) => c.status === "erro").length;
+  return `${emojiNota(d.nota)} Meu site tirou ${d.nota}/100 no diagnóstico SEO/AEO/GEO do Citavel!\n` +
+    `SEO: ${d.porCategoria.SEO} · AEO: ${d.porCategoria.AEO} · GEO: ${d.porCategoria.GEO}\n` +
+    (erros ? `${erros} problema(s) crítico(s) encontrado(s).\n` : "") +
+    `Teste o seu grátis: citavel.site`;
+}
+
+document.getElementById("copiar").addEventListener("click", async () => {
+  if (!ultimoResultado) return;
+  await navigator.clipboard.writeText(textoCompartilhavel());
+  const b = document.getElementById("copiar");
+  b.textContent = "✅ Copiado!";
+  setTimeout(() => (b.textContent = "📋 Copiar resultado"), 2000);
+});
+
+document.getElementById("whatsapp").addEventListener("click", () => {
+  if (!ultimoResultado) return;
+  window.open("https://wa.me/?text=" + encodeURIComponent(textoCompartilhavel()));
+});
+
+document.getElementById("kit").addEventListener("click", () => {
+  if (!ultimoResultado) return;
+  location.href = "/kit.html?url=" + encodeURIComponent(ultimoResultado.url);
+});
+
+document.getElementById("cta-painel").addEventListener("click", () => {
+  if (!ultimoResultado) return;
+  location.href = "/painel.html?url=" + encodeURIComponent(ultimoResultado.url);
+});
+
+// Vindo da landing page com ?url=..., dispara a análise automaticamente
+const urlParam = new URLSearchParams(location.search).get("url");
+if (urlParam) {
+  document.getElementById("url").value = urlParam;
+  form.requestSubmit();
+}
+</script>
+</body>
+</html>

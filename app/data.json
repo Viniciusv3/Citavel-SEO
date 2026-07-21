@@ -1,0 +1,234 @@
+{
+  "clientes": [
+    {
+      "id": "2105469e",
+      "url": "https://example.com/",
+      "nome": "Example Domain",
+      "contexto": {
+        "nome": "Example Domain",
+        "dominio": "example.com",
+        "descricao": "",
+        "resumoTexto": "Example DomainThis domain is for use in documentation examples without needing permission. Avoid use in operations.Learn more",
+        "detectado": {
+          "telefone": "",
+          "email": "",
+          "instagram": ""
+        }
+      },
+      "nota": 44,
+      "criadoEm": "2026-07-21T00:13:18.977Z",
+      "pauta": [
+        {
+          "id": "blog",
+          "titulo": "Criar a seção de blog — hoje não existe nenhum conteúdo editorial para o Google rankear ou o ChatGPT citar",
+          "usado": false
+        },
+        {
+          "id": "comercial:preco",
+          "pergunta": "Quanto custa? (preços)",
+          "titulo": "Post respondendo \"Quanto custa? (preços)\" — pergunta que clientes fazem e o site não responde",
+          "usado": true
+        },
+        {
+          "id": "comercial:como-funciona",
+          "pergunta": "Como funciona?",
+          "titulo": "Post respondendo \"Como funciona?\" — pergunta que clientes fazem e o site não responde",
+          "usado": true
+        },
+        {
+          "id": "comercial:horario",
+          "pergunta": "Horário de atendimento",
+          "titulo": "Post respondendo \"Horário de atendimento\" — pergunta que clientes fazem e o site não responde",
+          "usado": false
+        },
+        {
+          "id": "comercial:endereco",
+          "pergunta": "Onde fica? (endereço)",
+          "titulo": "Post respondendo \"Onde fica? (endereço)\" — pergunta que clientes fazem e o site não responde",
+          "usado": false
+        },
+        {
+          "id": "comercial:pagamento",
+          "pergunta": "Formas de pagamento",
+          "titulo": "Post respondendo \"Formas de pagamento\" — pergunta que clientes fazem e o site não responde",
+          "usado": false
+        },
+        {
+          "id": "comercial:garantia",
+          "pergunta": "Garantia / trocas",
+          "titulo": "Post respondendo \"Garantia / trocas\" — pergunta que clientes fazem e o site não responde",
+          "usado": false
+        },
+        {
+          "id": "faq",
+          "titulo": "Página de perguntas frequentes com FAQ schema — porta de entrada para featured snippets",
+          "usado": false
+        },
+        {
+          "id": "perguntas",
+          "titulo": "Reestruturar títulos em formato de pergunta — como buscadores e IAs indexam respostas",
+          "usado": false
+        },
+        {
+          "id": "substancia",
+          "titulo": "Aprofundar o conteúdo institucional — páginas rasas não são citadas por IAs",
+          "usado": false
+        }
+      ],
+      "posts": [
+        {
+          "id": "2bf19c44",
+          "gapId": "comercial:preco",
+          "status": "needs_review",
+          "criadoEm": "2026-07-21T00:13:19.511Z",
+          "publicadoEm": null,
+          "publishAt": null,
+          "canal": null,
+          "link": null,
+          "motor": "template",
+          "pendencias": 0,
+          "titulo": "Quanto custa contratar a Example Domain? Preços e o que está incluso",
+          "metaDescription": "Veja quanto custa contratar a Example Domain: valores, o que está incluso e como pedir um orçamento sem compromisso.",
+          "slug": "quanto-custa-contratar-a-example-domain-precos-e-o-que-esta-",
+          "faq": [
+            {
+              "pergunta": "Quanto custa o serviço da Example Domain?",
+              "resposta": "Os valores partem de R$ 45 (corte) e R$ 70 (corte + barba). Peça um orçamento sem compromisso."
+            },
+            {
+              "pergunta": "Quais formas de pagamento são aceitas?",
+              "resposta": "Pix, cart�o de cr�dito em at� 3x e dinheiro"
+            },
+            {
+              "pergunta": "Como peço um orçamento?",
+              "resposta": "Chame no WhatsApp (19) 99999-1234 ou agende direto pelo app."
+            }
+          ],
+          "corpoMarkdown": "## Quanto custa contratar a Example Domain?\n\nOs valores partem de **R$ 45 (corte) e R$ 70 (corte + barba)**. Trabalhamos com somos uma barbearia moderna no centro de campinas, especializada em cortes cl�ssicos e degrad�.\n\n## O que está incluso\n\n- Atendimento sem fila com agendamento pelo app\n- Barbeiros com +10 anos de experi�ncia\n- Cerveja gelada por conta da casa\n\n## Formas de pagamento\n\nPix, cart�o de cr�dito em at� 3x e dinheiro\n\n## Como pedir um orçamento\n\nChame no WhatsApp (19) 99999-1234 ou agende direto pelo app.",
+          "markdownCompleto": "---\ntitle: \"Quanto custa contratar a Example Domain? Preços e o que está incluso\"\ndescription: \"Veja quanto custa contratar a Example Domain: valores, o que está incluso e como pedir um orçamento sem compromisso.\"\nslug: quanto-custa-contratar-a-example-domain-precos-e-o-que-esta-\n---\n\n## Quanto custa contratar a Example Domain?\n\nOs valores partem de **R$ 45 (corte) e R$ 70 (corte + barba)**. Trabalhamos com somos uma barbearia moderna no centro de campinas, especializada em cortes cl�ssicos e degrad�.\n\n## O que está incluso\n\n- Atendimento sem fila com agendamento pelo app\n- Barbeiros com +10 anos de experi�ncia\n- Cerveja gelada por conta da casa\n\n## Formas de pagamento\n\nPix, cart�o de cr�dito em at� 3x e dinheiro\n\n## Como pedir um orçamento\n\nChame no WhatsApp (19) 99999-1234 ou agende direto pelo app.\n\n## Perguntas frequentes\n\n**Quanto custa o serviço da Example Domain?**\n\nOs valores partem de R$ 45 (corte) e R$ 70 (corte + barba). Peça um orçamento sem compromisso.\n\n**Quais formas de pagamento são aceitas?**\n\nPix, cart�o de cr�dito em at� 3x e dinheiro\n\n**Como peço um orçamento?**\n\nChame no WhatsApp (19) 99999-1234 ou agende direto pelo app.\n",
+          "htmlCompleto": "<article>\n<h1>Quanto custa contratar a Example Domain? Preços e o que está incluso</h1>\n<h2>Quanto custa contratar a Example Domain?</h2>\n<p>Os valores partem de <strong>R$ 45 (corte) e R$ 70 (corte + barba)</strong>. Trabalhamos com somos uma barbearia moderna no centro de campinas, especializada em cortes cl�ssicos e degrad�.</p>\n<h2>O que está incluso</h2>\n<ul>\n<li>Atendimento sem fila com agendamento pelo app</li>\n<li>Barbeiros com +10 anos de experi�ncia</li>\n<li>Cerveja gelada por conta da casa</li>\n</ul>\n<h2>Formas de pagamento</h2>\n<p>Pix, cart�o de cr�dito em at� 3x e dinheiro</p>\n<h2>Como pedir um orçamento</h2>\n<p>Chame no WhatsApp (19) 99999-1234 ou agende direto pelo app.</p>\n<section>\n<h2>Perguntas frequentes</h2>\n<h3>Quanto custa o serviço da Example Domain?</h3>\n<p>Os valores partem de R$ 45 (corte) e R$ 70 (corte + barba). Peça um orçamento sem compromisso.</p>\n<h3>Quais formas de pagamento são aceitas?</h3>\n<p>Pix, cart�o de cr�dito em at� 3x e dinheiro</p>\n<h3>Como peço um orçamento?</h3>\n<p>Chame no WhatsApp (19) 99999-1234 ou agende direto pelo app.</p>\n</section>\n</article>\n<script type=\"application/ld+json\">\n{\n  \"@context\": \"https://schema.org\",\n  \"@type\": \"FAQPage\",\n  \"mainEntity\": [\n    {\n      \"@type\": \"Question\",\n      \"name\": \"Quanto custa o serviço da Example Domain?\",\n      \"acceptedAnswer\": {\n        \"@type\": \"Answer\",\n        \"text\": \"Os valores partem de R$ 45 (corte) e R$ 70 (corte + barba). Peça um orçamento sem compromisso.\"\n      }\n    },\n    {\n      \"@type\": \"Question\",\n      \"name\": \"Quais formas de pagamento são aceitas?\",\n      \"acceptedAnswer\": {\n        \"@type\": \"Answer\",\n        \"text\": \"Pix, cart�o de cr�dito em at� 3x e dinheiro\"\n      }\n    },\n    {\n      \"@type\": \"Question\",\n      \"name\": \"Como peço um orçamento?\",\n      \"acceptedAnswer\": {\n        \"@type\": \"Answer\",\n        \"text\": \"Chame no WhatsApp (19) 99999-1234 ou agende direto pelo app.\"\n      }\n    }\n  ]\n}\n</script>",
+          "faqSchema": {
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "Quanto custa o serviço da Example Domain?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Os valores partem de R$ 45 (corte) e R$ 70 (corte + barba). Peça um orçamento sem compromisso."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Quais formas de pagamento são aceitas?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Pix, cart�o de cr�dito em at� 3x e dinheiro"
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Como peço um orçamento?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Chame no WhatsApp (19) 99999-1234 ou agende direto pelo app."
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "a930cdd8",
+          "gapId": "comercial:como-funciona",
+          "status": "needs_review",
+          "criadoEm": "2026-07-21T00:13:57.726Z",
+          "publicadoEm": null,
+          "publishAt": null,
+          "canal": null,
+          "link": null,
+          "motor": "template",
+          "pendencias": 0,
+          "titulo": "Como funciona a Example Domain? Passo a passo completo",
+          "metaDescription": "Entenda como funciona a Example Domain: o que fazemos, para quem, e o passo a passo do primeiro contato à entrega.",
+          "slug": "como-funciona-a-example-domain-passo-a-passo-completo",
+          "faq": [
+            {
+              "pergunta": "Como começo com a Example Domain?",
+              "resposta": "Chame no WhatsApp (19) 99999-1234 ou agende direto pelo app."
+            },
+            {
+              "pergunta": "O que a Example Domain faz?",
+              "resposta": "Somos uma barbearia moderna no centro de Campinas, especializada em cortes cl�ssicos e degrad�."
+            },
+            {
+              "pergunta": "Para quem o serviço é indicado?",
+              "resposta": "Homens de 18 a 45 anos que querem corte de qualidade sem hora marcada."
+            }
+          ],
+          "corpoMarkdown": "## Como funciona a Example Domain?\n\nSomos uma barbearia moderna no centro de Campinas, especializada em cortes cl�ssicos e degrad�.\n\n## Para quem é\n\nHomens de 18 a 45 anos que querem corte de qualidade sem hora marcada.\n\n## Nossos diferenciais\n\n- Atendimento sem fila com agendamento pelo app\n- Barbeiros com +10 anos de experi�ncia\n- Cerveja gelada por conta da casa\n\n## Como começar\n\nChame no WhatsApp (19) 99999-1234 ou agende direto pelo app.",
+          "markdownCompleto": "---\ntitle: \"Como funciona a Example Domain? Passo a passo completo\"\ndescription: \"Entenda como funciona a Example Domain: o que fazemos, para quem, e o passo a passo do primeiro contato à entrega.\"\nslug: como-funciona-a-example-domain-passo-a-passo-completo\n---\n\n## Como funciona a Example Domain?\n\nSomos uma barbearia moderna no centro de Campinas, especializada em cortes cl�ssicos e degrad�.\n\n## Para quem é\n\nHomens de 18 a 45 anos que querem corte de qualidade sem hora marcada.\n\n## Nossos diferenciais\n\n- Atendimento sem fila com agendamento pelo app\n- Barbeiros com +10 anos de experi�ncia\n- Cerveja gelada por conta da casa\n\n## Como começar\n\nChame no WhatsApp (19) 99999-1234 ou agende direto pelo app.\n\n## Perguntas frequentes\n\n**Como começo com a Example Domain?**\n\nChame no WhatsApp (19) 99999-1234 ou agende direto pelo app.\n\n**O que a Example Domain faz?**\n\nSomos uma barbearia moderna no centro de Campinas, especializada em cortes cl�ssicos e degrad�.\n\n**Para quem o serviço é indicado?**\n\nHomens de 18 a 45 anos que querem corte de qualidade sem hora marcada.\n",
+          "htmlCompleto": "<article>\n<h1>Como funciona a Example Domain? Passo a passo completo</h1>\n<h2>Como funciona a Example Domain?</h2>\n<p>Somos uma barbearia moderna no centro de Campinas, especializada em cortes cl�ssicos e degrad�.</p>\n<h2>Para quem é</h2>\n<p>Homens de 18 a 45 anos que querem corte de qualidade sem hora marcada.</p>\n<h2>Nossos diferenciais</h2>\n<ul>\n<li>Atendimento sem fila com agendamento pelo app</li>\n<li>Barbeiros com +10 anos de experi�ncia</li>\n<li>Cerveja gelada por conta da casa</li>\n</ul>\n<h2>Como começar</h2>\n<p>Chame no WhatsApp (19) 99999-1234 ou agende direto pelo app.</p>\n<section>\n<h2>Perguntas frequentes</h2>\n<h3>Como começo com a Example Domain?</h3>\n<p>Chame no WhatsApp (19) 99999-1234 ou agende direto pelo app.</p>\n<h3>O que a Example Domain faz?</h3>\n<p>Somos uma barbearia moderna no centro de Campinas, especializada em cortes cl�ssicos e degrad�.</p>\n<h3>Para quem o serviço é indicado?</h3>\n<p>Homens de 18 a 45 anos que querem corte de qualidade sem hora marcada.</p>\n</section>\n</article>\n<script type=\"application/ld+json\">\n{\n  \"@context\": \"https://schema.org\",\n  \"@type\": \"FAQPage\",\n  \"mainEntity\": [\n    {\n      \"@type\": \"Question\",\n      \"name\": \"Como começo com a Example Domain?\",\n      \"acceptedAnswer\": {\n        \"@type\": \"Answer\",\n        \"text\": \"Chame no WhatsApp (19) 99999-1234 ou agende direto pelo app.\"\n      }\n    },\n    {\n      \"@type\": \"Question\",\n      \"name\": \"O que a Example Domain faz?\",\n      \"acceptedAnswer\": {\n        \"@type\": \"Answer\",\n        \"text\": \"Somos uma barbearia moderna no centro de Campinas, especializada em cortes cl�ssicos e degrad�.\"\n      }\n    },\n    {\n      \"@type\": \"Question\",\n      \"name\": \"Para quem o serviço é indicado?\",\n      \"acceptedAnswer\": {\n        \"@type\": \"Answer\",\n        \"text\": \"Homens de 18 a 45 anos que querem corte de qualidade sem hora marcada.\"\n      }\n    }\n  ]\n}\n</script>",
+          "faqSchema": {
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "Como começo com a Example Domain?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Chame no WhatsApp (19) 99999-1234 ou agende direto pelo app."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "O que a Example Domain faz?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Somos uma barbearia moderna no centro de Campinas, especializada em cortes cl�ssicos e degrad�."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Para quem o serviço é indicado?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Homens de 18 a 45 anos que querem corte de qualidade sem hora marcada."
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "perfil": {
+        "oQueFaz": "Somos uma barbearia moderna no centro de Campinas, especializada em cortes cl�ssicos e degrad�.",
+        "publico": "Homens de 18 a 45 anos que querem corte de qualidade sem hora marcada.",
+        "diferenciais": "Atendimento sem fila com agendamento pelo app\nBarbeiros com +10 anos de experi�ncia\nCerveja gelada por conta da casa",
+        "precoBase": "R$ 45 (corte) e R$ 70 (corte + barba)",
+        "pagamento": "Pix, cart�o de cr�dito em at� 3x e dinheiro",
+        "horario": "ter�a a s�bado, das 9h �s 20h",
+        "endereco": "Rua Bar�o de Jaguara, 1200 � Centro, Campinas/SP",
+        "whatsapp": "(19) 99999-1234",
+        "email": "",
+        "instagram": "",
+        "garantia": "",
+        "comoComecar": "Chame no WhatsApp (19) 99999-1234 ou agende direto pelo app."
+      },
+      "entrega": {
+        "modo": "hospedado",
+        "wp": null
+      },
+      "tema": {
+        "corPrimaria": "#6c8cff",
+        "corFundo": "#ffffff",
+        "corTexto": "#1c2333"
+      },
+      "agenda": {
+        "autoPublicar": false,
+        "intervaloDias": 3,
+        "proximaEm": null
+      }
+    }
+  ]
+}

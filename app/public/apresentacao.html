@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Citavel — Apresentação do Projeto</title>
+<style>
+  :root {
+    --bg: #0b0e14; --surface: #131826; --surface-2: #1a2136; --border: #252d45;
+    --text: #e8ecf6; --muted: #8a94ad; --accent: #6c8cff; --accent-2: #9d6cff;
+    --ok: #3ecf8e; --warn: #f5b83d; --err: #f56565;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; overflow: hidden; }
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: "Segoe UI", system-ui, sans-serif;
+  }
+  .slide {
+    position: absolute; inset: 0; display: none; flex-direction: column;
+    justify-content: center; align-items: center; padding: 6vh 8vw; text-align: center;
+  }
+  .slide.active { display: flex; animation: fadein .35s ease; }
+  @keyframes fadein { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; } }
+
+  .kicker {
+    font-size: .85rem; font-weight: 700; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 18px;
+  }
+  h1 {
+    font-size: clamp(2.2rem, 5.5vw, 4rem); font-weight: 800; letter-spacing: -1px;
+    line-height: 1.15; max-width: 900px;
+  }
+  h1 .grad, .logo {
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  h2 { font-size: clamp(1.6rem, 3.5vw, 2.4rem); font-weight: 800; margin-bottom: 28px; letter-spacing: -.5px; }
+  .sub { font-size: clamp(1rem, 2vw, 1.25rem); color: var(--muted); max-width: 720px; margin-top: 20px; line-height: 1.6; }
+
+  .cards { display: flex; gap: 18px; flex-wrap: wrap; justify-content: center; max-width: 1000px; }
+  .card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+    padding: 26px 24px; width: 290px; text-align: left;
+  }
+  .card .emoji { font-size: 1.8rem; margin-bottom: 10px; display: block; }
+  .card b { font-size: 1.05rem; display: block; margin-bottom: 8px; }
+  .card p { font-size: .9rem; color: var(--muted); line-height: 1.55; }
+  .card .pill {
+    display: inline-block; font-size: .7rem; font-weight: 700; letter-spacing: 1px;
+    padding: 3px 10px; border-radius: 99px; margin-bottom: 12px;
+    background: var(--surface-2); border: 1px solid var(--border); color: var(--accent);
+  }
+  .card.destaque { border-color: var(--accent); box-shadow: 0 0 40px rgba(108,140,255,.15); }
+
+  .flow { display: flex; gap: 0; align-items: stretch; flex-wrap: wrap; justify-content: center; max-width: 1050px; }
+  .flow .step {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+    padding: 20px 18px; width: 185px; text-align: left; position: relative;
+  }
+  .flow .arrow { display: flex; align-items: center; padding: 0 10px; color: var(--accent); font-size: 1.4rem; font-weight: 800; }
+  .flow .n {
+    width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2)); color: #fff;
+    font-size: .8rem; font-weight: 800; margin-bottom: 10px;
+  }
+  .flow b { font-size: .92rem; display: block; margin-bottom: 6px; }
+  .flow p { font-size: .78rem; color: var(--muted); line-height: 1.45; }
+
+  table { border-collapse: collapse; max-width: 950px; text-align: left; font-size: .92rem; }
+  th, td { padding: 13px 18px; border-bottom: 1px solid var(--border); }
+  th { color: var(--muted); font-size: .75rem; text-transform: uppercase; letter-spacing: 1.5px; }
+  td b { color: var(--accent); }
+  td { color: var(--text); line-height: 1.5; }
+  td .neg { color: var(--err); } td .pos { color: var(--ok); }
+
+  .fases { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; max-width: 1000px; }
+  .fase {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+    padding: 22px 20px; width: 225px; text-align: left;
+  }
+  .fase .letra {
+    font-size: 1.6rem; font-weight: 800;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .fase b { display: block; margin: 8px 0 6px; font-size: .95rem; }
+  .fase p { font-size: .82rem; color: var(--muted); line-height: 1.5; }
+
+  .score-demo {
+    font-size: clamp(3rem, 8vw, 5rem); font-weight: 800; margin: 10px 0;
+  }
+  .nav {
+    position: fixed; bottom: 22px; left: 0; right: 0; display: flex;
+    justify-content: center; align-items: center; gap: 16px; z-index: 10;
+  }
+  .nav button {
+    background: var(--surface); border: 1px solid var(--border); color: var(--text);
+    width: 42px; height: 42px; border-radius: 50%; font-size: 1.1rem; cursor: pointer;
+  }
+  .nav button:hover { border-color: var(--accent); }
+  .nav .count { color: var(--muted); font-size: .85rem; min-width: 52px; text-align: center; }
+  .progress {
+    position: fixed; top: 0; left: 0; height: 3px; z-index: 10;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    transition: width .3s ease;
+  }
+  ul.clean { list-style: none; text-align: left; max-width: 700px; }
+  ul.clean li { padding: 10px 0 10px 34px; position: relative; font-size: 1.05rem; color: var(--text); line-height: 1.5; }
+  ul.clean li::before { content: "→"; position: absolute; left: 0; color: var(--accent); font-weight: 800; }
+  ul.clean li span { color: var(--muted); font-size: .9rem; display: block; }
+  .hintkey { position: fixed; bottom: 26px; right: 26px; color: var(--muted); font-size: .75rem; }
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+
+<!-- 1. Capa -->
+<section class="slide active">
+  <div class="kicker">Diagnóstico grátis · Blog automático pago</div>
+  <h1><span class="grad">Citavel</span></h1>
+  <h1 style="font-size: clamp(1.4rem, 3vw, 2.2rem); font-weight: 600; margin-top: 18px;">
+    Seu site é encontrado pelo Google —<br>e <span class="grad">citado pelas IAs</span>?
+  </h1>
+  <p class="sub">SEO · AEO · GEO — a nova tríade da visibilidade digital, em um produto só.</p>
+</section>
+
+<!-- 2. O problema -->
+<section class="slide">
+  <h2>O jogo da busca mudou</h2>
+  <div class="cards">
+    <div class="card">
+      <span class="emoji">🔍</span>
+      <span class="pill">ONTEM</span>
+      <b>Ser achado no Google</b>
+      <p>SEO clássico: rankear em 10 links azuis. Mercado dominado por SEMrush, Ahrefs, Ubersuggest — caros e complexos demais para o pequeno negócio.</p>
+    </div>
+    <div class="card destaque">
+      <span class="emoji">🤖</span>
+      <span class="pill">HOJE</span>
+      <b>Ser citado pela IA</b>
+      <p>ChatGPT, Perplexity e AI Overview respondem direto — e citam poucos sites. Quem não é <i>citável</i> simplesmente não existe nessas respostas.</p>
+    </div>
+    <div class="card">
+      <span class="emoji">😶</span>
+      <span class="pill">A DOR</span>
+      <b>O pequeno negócio não sabe</b>
+      <p>Donos de negócio não sabem o que é GEO, não sabem medir, e não têm quem escreva o conteúdo que resolveria isso.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 3. Conceito -->
+<section class="slide">
+  <h2>SEO · AEO · GEO — o que medimos</h2>
+  <div class="cards">
+    <div class="card">
+      <span class="pill">SEO</span>
+      <b>Rankeamento clássico</b>
+      <p>Crawlability, sitemap, HTTPS, Core Web Vitals, title/meta, hierarquia H1-H6, alt text, links internos, schema.org.</p>
+    </div>
+    <div class="card">
+      <span class="pill">AEO</span>
+      <b>Answer Engines</b>
+      <p>Featured snippets, People Also Ask, FAQ schema, conteúdo em formato pergunta-resposta que o Google exibe como resposta pronta.</p>
+    </div>
+    <div class="card destaque">
+      <span class="pill">GEO</span>
+      <b>Generative Engines</b>
+      <p>Ser citado por LLMs: conteúdo citável, clareza factual, E-E-A-T, estrutura fácil de extrair. <b style="display:inline;color:var(--accent)">Este é o diferencial real</b> — ninguém atende esse ângulo para pequenos negócios.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 4. Produto: isca -->
+<section class="slide">
+  <div class="kicker">O funil</div>
+  <h2>Isca grátis: nota compartilhável</h2>
+  <div class="score-demo">38<span style="color:var(--muted);font-size:.4em">/100</span> 😬</div>
+  <p class="sub">Qualquer pessoa cola a URL e recebe em segundos uma nota 0-100 + lista de problemas
+     com severidade. Sem cadastro. A nota ruim é viral por natureza — vira abertura
+     de conversa no WhatsApp e prova social do problema.</p>
+  <ul class="clean" style="margin-top: 24px;">
+    <li>Camada 1 — checks determinísticos <span>robots.txt, sitemap, meta tags, schema, HTTPS, mobile… custo zero</span></li>
+    <li>Camada 2 — leitura qualitativa via IA <span>"esse conteúdo responde perguntas? é citável?" — gera a lista de gaps</span></li>
+  </ul>
+</section>
+
+<!-- 5. Monetização -->
+<section class="slide">
+  <div class="kicker">A monetização</div>
+  <h2>Do diagnóstico ao blog automático</h2>
+  <div class="flow">
+    <div class="step"><div class="n">1</div><b>Diagnóstico</b><p>encontra os gaps de conteúdo: perguntas do nicho que o site não responde</p></div>
+    <div class="arrow">→</div>
+    <div class="step"><div class="n">2</div><b>Pauta automática</b><p>cada gap vira um post na fila — sem pesquisa manual de pauta</p></div>
+    <div class="arrow">→</div>
+    <div class="step"><div class="n">3</div><b>Geração two-pass</b><p>Haiku extrai contexto, Sonnet escreve o post completo com FAQ schema</p></div>
+    <div class="arrow">→</div>
+    <div class="step"><div class="n">4</div><b>Publicação no site do cliente</b><p>na estética dele, no domínio dele — 2 posts/semana, no piloto automático</p></div>
+  </div>
+  <p class="sub" style="margin-top: 30px;">Grátis diagnostica. <b style="color:var(--text)">Pago corrige</b> — continuamente.</p>
+</section>
+
+<!-- 6. Entrega -->
+<section class="slide">
+  <h2>O ponto delicado: como o post chega no site do cliente</h2>
+  <table>
+    <tr><th>Modo</th><th>Como funciona</th><th>Trade-off</th></tr>
+    <tr><td><b>3.1 Exportação manual</b></td><td>Geramos Markdown/HTML pronto, cliente cola no CMS</td><td><span class="pos">Zero engenharia</span> · <span class="neg">semi-manual</span></td></tr>
+    <tr><td><b>3.2 CMS nativo (WordPress)</b></td><td>Publicamos via REST API — post nasce no tema do cliente</td><td><span class="pos">Estética grátis, maior mercado BR</span></td></tr>
+    <tr><td><b>3.3 Proxy reverso</b></td><td><code>sitecliente.com/blog/*</code> aponta para nossos servidores</td><td><span class="pos">SEO no domínio do cliente</span> · <span class="neg">setup técnico</span></td></tr>
+    <tr><td><b>3.4 Subdomínio nosso</b></td><td><code>cliente.citavel.site</code> com tema configurável</td><td><span class="neg">Autoridade SEO fraca — só fallback</span></td></tr>
+  </table>
+  <p class="sub" style="margin-top: 24px;">Não são alternativas — são <b style="color:var(--text)">fases do roadmap</b>.</p>
+</section>
+
+<!-- 7. Roadmap -->
+<section class="slide">
+  <h2>Roadmap de entrega</h2>
+  <div class="fases">
+    <div class="fase"><span class="letra">A</span><b>MVP pago</b><p>Exportação manual — valida se as pessoas realmente querem os posts, antes de investir em integração.</p></div>
+    <div class="fase"><span class="letra">B</span><b>WordPress nativo</b><p>Maior cobertura de mercado pelo menor esforço. Cliente cola uma Application Password e pronto.</p></div>
+    <div class="fase"><span class="letra">C</span><b>Proxy reverso</b><p>Cobre quem não usa WordPress. Onboarding assistido ("fazemos por você") nos primeiros clientes.</p></div>
+    <div class="fase"><span class="letra">D</span><b>Converzia nativa</b><p>Cliente dos dois lados: /blog/* vira rota nativa da página que já hospedamos. Cross-sell quase grátis.</p></div>
+  </div>
+</section>
+
+<!-- 8. Aquisição -->
+<section class="slide">
+  <h2>Primeiros clientes</h2>
+  <ul class="clean">
+    <li>Nota compartilhável como isca viral <span>"38/100 😬" pede para ser compartilhado</span></li>
+    <li>Prospecção automatizada reaproveitada <span>achar leads com site ruim, rodar o diagnóstico e usar o resultado como abertura no WhatsApp</span></li>
+    <li>Parceria B2B2C com agências pequenas de marketing</li>
+    <li>SEO do próprio produto <span>rankear para "teste de SEO grátis"</span></li>
+    <li>Comunidades de nicho PT-BR <span>grupos de e-commerce e agências</span></li>
+  </ul>
+</section>
+
+<!-- 9. Status -->
+<section class="slide">
+  <div class="kicker">Onde estamos</div>
+  <h2>Protótipo funcional já roda</h2>
+  <ul class="clean">
+    <li>Diagnóstico Camada 1 funcionando <span>20 checks reais de SEO/AEO/GEO, nota ponderada 0-100, notas por categoria, rate-limit por IP</span></li>
+    <li>Interface completa <span>formulário → análise → nota + problemas por severidade + botão de compartilhar no WhatsApp</span></li>
+    <li>Próximos passos <span>Camada 2 (IA qualitativa) · confirmar recorrência no Asaas · decidir MVP pago (manual vs. WordPress) · nome definitivo</span></li>
+  </ul>
+  <p class="sub" style="margin-top: 28px;"><span class="logo" style="font-weight:800">Citavel</span> — porque em 2026, não basta ser encontrado. Tem que ser citável.</p>
+</section>
+
+<div class="nav">
+  <button id="prev">←</button>
+  <span class="count" id="count">1 / 9</span>
+  <button id="next">→</button>
+</div>
+<div class="hintkey">use ← → do teclado</div>
+
+<script>
+const slides = [...document.querySelectorAll(".slide")];
+let i = 0;
+function show(n) {
+  i = Math.max(0, Math.min(slides.length - 1, n));
+  slides.forEach((s, k) => s.classList.toggle("active", k === i));
+  document.getElementById("count").textContent = `${i + 1} / ${slides.length}`;
+  document.getElementById("progress").style.width = ((i + 1) / slides.length) * 100 + "%";
+}
+document.getElementById("next").onclick = () => show(i + 1);
+document.getElementById("prev").onclick = () => show(i - 1);
+document.addEventListener("keydown", (e) => {
+  if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") show(i + 1);
+  if (e.key === "ArrowLeft" || e.key === "PageUp") show(i - 1);
+});
+show(0);
+</script>
+</body>
+</html>

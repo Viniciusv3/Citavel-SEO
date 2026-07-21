@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Citavel — Painel</title>
+<style>
+  :root {
+    --bg:#0b0e14; --surface:#131826; --surface-2:#1a2136; --border:#252d45;
+    --text:#e8ecf6; --muted:#8a94ad; --accent:#6c8cff; --accent-2:#9d6cff;
+    --ok:#3ecf8e; --warn:#f5b83d; --err:#f56565; --radius:14px;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:"Segoe UI",system-ui,sans-serif; line-height:1.55; }
+  .wrap { max-width:980px; margin:0 auto; padding:26px 20px 80px; }
+
+  .topbar { display:flex; justify-content:space-between; align-items:center; margin-bottom:26px; }
+  .logo { font-size:1.35rem; font-weight:800; background:linear-gradient(90deg,var(--accent),var(--accent-2)); -webkit-background-clip:text; background-clip:text; color:transparent; text-decoration:none; }
+  .topbar a.mini { color:var(--muted); text-decoration:none; font-size:.88rem; margin-left:16px; }
+  .topbar a.mini:hover { color:var(--text); }
+
+  h2 { font-size:1.05rem; margin-bottom:14px; }
+  .card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:22px; margin-bottom:16px; }
+
+  input, select, textarea {
+    background:var(--surface-2); border:1px solid var(--border); color:var(--text);
+    padding:11px 14px; border-radius:10px; font-size:.92rem; outline:none; font-family:inherit;
+  }
+  input:focus, select:focus, textarea:focus { border-color:var(--accent); }
+  textarea { resize:vertical; min-height:64px; }
+  button {
+    background:var(--surface-2); border:1px solid var(--border); color:var(--text);
+    padding:10px 16px; border-radius:10px; font-size:.88rem; font-weight:600; cursor:pointer;
+  }
+  button:hover { border-color:var(--accent); }
+  button.primaria { background:linear-gradient(90deg,var(--accent),var(--accent-2)); border:none; color:#fff; }
+  button:disabled { opacity:.5; cursor:wait; }
+  .linha { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+
+  /* seletor de clientes */
+  .clientes-row { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:8px; }
+  .chip {
+    display:flex; align-items:center; gap:8px; padding:9px 16px; border-radius:99px;
+    border:1px solid var(--border); background:var(--surface); cursor:pointer; font-size:.88rem;
+  }
+  .chip:hover, .chip.ativo { border-color:var(--accent); }
+  .chip .n { font-weight:800; }
+
+  /* cabeçalho do cliente */
+  .cli-header { display:flex; justify-content:space-between; align-items:center; gap:14px; flex-wrap:wrap; }
+  .cli-header h1 { font-size:1.35rem; }
+  .cli-header .url { color:var(--muted); font-size:.85rem; }
+  .cli-header .score { font-size:1.6rem; font-weight:800; }
+
+  /* onboarding */
+  .passos { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:14px; }
+  .passo { flex:1; min-width:104px; text-align:center; font-size:.74rem; font-weight:700; padding:8px 4px; border-radius:8px; }
+  .passo.feito { border:1px solid rgba(62,207,142,.4); background:rgba(62,207,142,.1); color:var(--ok); }
+  .passo.pendente { border:1px solid var(--border); background:var(--surface-2); color:var(--muted); }
+  .proximo-box { display:flex; justify-content:space-between; align-items:center; gap:14px; flex-wrap:wrap; }
+  .proximo-box .rotulo { font-size:.72rem; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--accent); margin-bottom:2px; }
+
+  /* abas */
+  .abas { display:flex; gap:6px; margin-bottom:16px; border-bottom:1px solid var(--border); }
+  .aba {
+    padding:11px 18px; font-size:.9rem; font-weight:700; color:var(--muted); cursor:pointer;
+    border:none; background:none; border-bottom:2px solid transparent; border-radius:0;
+  }
+  .aba:hover { color:var(--text); border-bottom-color:var(--border); }
+  .aba.ativa { color:var(--accent); border-bottom-color:var(--accent); }
+  .painel-aba { display:none; }
+  .painel-aba.ativa { display:block; }
+
+  /* perfil */
+  .perfil-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:16px; }
+  .campo label { display:block; font-size:.8rem; font-weight:700; margin-bottom:4px; }
+  .campo .ajuda { font-size:.74rem; color:var(--muted); font-weight:400; }
+  .campo input, .campo select, .campo textarea { width:100%; }
+  .campo.cheio { grid-column:1 / -1; }
+  .perfil-progresso { font-size:.85rem; color:var(--muted); margin-bottom:16px; }
+  .perfil-progresso b { color:var(--ok); }
+
+  /* listas */
+  .badge { font-size:.7rem; font-weight:700; letter-spacing:.5px; padding:3px 10px; border-radius:99px; white-space:nowrap; }
+  .badge.needs_review { background:rgba(245,184,61,.12); border:1px solid rgba(245,184,61,.4); color:var(--warn); }
+  .badge.aprovado { background:rgba(108,140,255,.12); border:1px solid rgba(108,140,255,.4); color:var(--accent); }
+  .badge.publicado { background:rgba(62,207,142,.12); border:1px solid rgba(62,207,142,.4); color:var(--ok); }
+  .badge.rejeitado { background:rgba(245,101,101,.12); border:1px solid rgba(245,101,101,.4); color:var(--err); }
+  .badge.pend { background:rgba(245,184,61,.12); border:1px solid rgba(245,184,61,.4); color:var(--warn); }
+
+  .item { display:flex; justify-content:space-between; align-items:center; gap:12px; padding:12px 0; border-bottom:1px solid var(--border); flex-wrap:wrap; }
+  .item:last-child { border-bottom:none; }
+  .item .info { flex:1; min-width:220px; }
+  .item .info b { font-size:.95rem; display:block; }
+  .item .info span { font-size:.8rem; color:var(--muted); }
+  .item .acoes { display:flex; gap:6px; flex-wrap:wrap; align-items:center; }
+  .item .acoes button { padding:7px 12px; font-size:.8rem; }
+
+  #msg { position:fixed; bottom:22px; left:50%; transform:translateX(-50%); z-index:50;
+    display:none; padding:12px 22px; border-radius:99px; font-size:.9rem; max-width:90vw; }
+  #msg.ok { display:block; background:#123326; border:1px solid rgba(62,207,142,.5); color:var(--ok); }
+  #msg.erro { display:block; background:#331717; border:1px solid rgba(245,101,101,.5); color:#ffb4b4; }
+
+  pre.snippet { background:var(--surface-2); border:1px solid var(--border); border-radius:10px; padding:14px; font-size:.75rem; overflow-x:auto; white-space:pre; }
+  .dica-box { font-size:.82rem; color:var(--muted); margin-top:8px; }
+  h3.secao { font-size:.78rem; text-transform:uppercase; letter-spacing:1.5px; color:var(--muted); margin:24px 0 10px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <a class="logo" href="/">Citavel</a>
+    <div>
+      <a class="mini" href="/">← Diagnóstico</a>
+      <a class="mini" href="/apresentacao.html">Apresentação</a>
+    </div>
+  </div>
+
+  <div id="msg"></div>
+
+  <!-- seleção / criação de cliente -->
+  <div class="card">
+    <div class="clientes-row" id="clientes-row"></div>
+    <div class="linha">
+      <input id="nova-url" placeholder="www.sitedocliente.com.br" style="flex:1; min-width:200px;">
+      <button class="primaria" id="btn-add">+ Adicionar site</button>
+    </div>
+  </div>
+
+  <div id="detalhe" style="display:none;">
+    <!-- cabeçalho -->
+    <div class="card cli-header">
+      <div>
+        <h1 id="d-nome"></h1>
+        <span class="url" id="d-url"></span>
+      </div>
+      <div class="linha">
+        <span class="score" id="d-nota"></span>
+        <a id="d-blog" href="#" target="_blank"><button>📰 Blog no ar</button></a>
+        <a id="d-kit" href="#"><button>🔧 Kit de correção</button></a>
+      </div>
+    </div>
+
+    <!-- onboarding -->
+    <div class="card" style="border-color:rgba(108,140,255,.45);">
+      <div class="passos" id="passos"></div>
+      <div class="proximo-box">
+        <div>
+          <div class="rotulo">Próximo passo</div>
+          <div id="proximo-texto" style="font-size:.98rem;"></div>
+        </div>
+        <button class="primaria" id="proximo-btn"></button>
+      </div>
+    </div>
+
+    <!-- abas -->
+    <div class="abas">
+      <button class="aba ativa" data-aba="perfil">📇 Perfil do negócio</button>
+      <button class="aba" data-aba="conteudo">📝 Conteúdo</button>
+      <button class="aba" data-aba="config">⚙️ Configurações</button>
+    </div>
+
+    <!-- ABA: perfil -->
+    <div class="painel-aba ativa" id="aba-perfil">
+      <div class="card">
+        <h2>Conte sobre o negócio — os posts saem prontos com essas respostas</h2>
+        <div class="perfil-progresso" id="perfil-progresso"></div>
+        <div class="perfil-grid">
+          <div class="campo cheio">
+            <label>O que o negócio faz? <span class="ajuda">2-3 frases, como você explicaria a um cliente</span></label>
+            <textarea id="p-oQueFaz"></textarea>
+          </div>
+          <div class="campo cheio">
+            <label>Quem é o cliente ideal? <span class="ajuda">quem mais se beneficia do que você oferece</span></label>
+            <textarea id="p-publico"></textarea>
+          </div>
+          <div class="campo cheio">
+            <label>Diferenciais <span class="ajuda">um por linha — ex.: atendimento em 24h</span></label>
+            <textarea id="p-diferenciais" placeholder="Atendimento no mesmo dia&#10;Garantia de 90 dias&#10;Orçamento grátis"></textarea>
+          </div>
+          <div class="campo"><label>Preço / faixa de preço <span class="ajuda">ex.: a partir de R$ 150</span></label><input id="p-precoBase"></div>
+          <div class="campo"><label>Formas de pagamento <span class="ajuda">ex.: Pix, cartão em até 12x</span></label><input id="p-pagamento"></div>
+          <div class="campo"><label>Horário de atendimento <span class="ajuda">ex.: seg a sex, 9h às 18h</span></label><input id="p-horario"></div>
+          <div class="campo"><label>Endereço <span class="ajuda">ou "atendimento 100% online"</span></label><input id="p-endereco"></div>
+          <div class="campo"><label>WhatsApp / telefone</label><input id="p-whatsapp"></div>
+          <div class="campo"><label>E-mail</label><input id="p-email"></div>
+          <div class="campo"><label>Instagram</label><input id="p-instagram" placeholder="@seunegocio"></div>
+          <div class="campo"><label>Garantia / trocas <span class="ajuda">ex.: 90 dias de garantia</span></label><input id="p-garantia"></div>
+          <div class="campo cheio">
+            <label>Como o cliente começa? <span class="ajuda">o primeiro passo — ex.: chama no WhatsApp e agenda uma avaliação grátis</span></label>
+            <input id="p-comoComecar">
+          </div>
+        </div>
+        <div class="linha" style="margin-top:18px;">
+          <button class="primaria" id="btn-perfil">Salvar perfil</button>
+          <span style="font-size:.82rem;color:var(--muted);">Detectamos contato e descrição do seu site automaticamente — confira e complete.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ABA: conteúdo -->
+    <div class="painel-aba" id="aba-conteudo">
+      <div class="card">
+        <h2>Fila de pauta <span style="font-weight:400;color:var(--muted);font-size:.85rem;">— o que seu site ainda não responde</span></h2>
+        <div id="lista-pauta"></div>
+      </div>
+      <div class="card">
+        <h2>Posts</h2>
+        <div id="lista-posts"></div>
+      </div>
+    </div>
+
+    <!-- ABA: configurações -->
+    <div class="painel-aba" id="aba-config">
+      <div class="card">
+        <h2>Onde os posts são publicados</h2>
+        <div class="campo" style="max-width:420px;">
+          <select id="c-modo" style="width:100%;">
+            <option value="hospedado">Blog hospedado pelo Citavel (recomendado p/ começar)</option>
+            <option value="wordpress">Direto no meu WordPress</option>
+            <option value="manual">Só gerar — eu mesmo colo no meu site</option>
+          </select>
+        </div>
+
+        <div id="cfg-wp" style="display:none; margin-top:14px;">
+          <div class="perfil-grid">
+            <div class="campo"><label>URL do WordPress</label><input id="wp-url" placeholder="https://sitedocliente.com.br"></div>
+            <div class="campo"><label>Usuário</label><input id="wp-usuario" placeholder="admin"></div>
+            <div class="campo"><label>Application Password</label><input id="wp-senha" type="password"></div>
+          </div>
+          <div class="linha" style="margin-top:10px;"><button id="btn-wp-testar">Testar conexão</button></div>
+          <div class="dica-box">Gere a Application Password no wp-admin: Usuários → Perfil → Application Passwords.</div>
+        </div>
+
+        <div id="cfg-hospedado" style="margin-top:14px;">
+          <h3 class="secao">Aparência do blog</h3>
+          <div class="linha">
+            <div class="campo"><label>Cor primária</label><input id="t-primaria" type="color"></div>
+            <div class="campo"><label>Fundo</label><input id="t-fundo" type="color"></div>
+            <div class="campo"><label>Texto</label><input id="t-texto" type="color"></div>
+          </div>
+          <h3 class="secao">Avançado: blog no SEU domínio (proxy reverso)</h3>
+          <pre class="snippet" id="proxy-snippet">…</pre>
+          <div class="dica-box">Cole este Cloudflare Worker no domínio do cliente e <b>sitedocliente.com/blog/*</b> passa a servir os posts — a autoridade SEO fica no domínio dele.</div>
+        </div>
+
+        <h3 class="secao">Piloto automático</h3>
+        <div class="linha">
+          <label class="linha" style="gap:8px; cursor:pointer;">
+            <input type="checkbox" id="a-auto" style="width:18px;height:18px;">
+            <span>Gerar e publicar sozinho a cada</span>
+          </label>
+          <input id="a-dias" type="number" min="1" max="30" style="width:70px;" value="3">
+          <span>dias</span>
+          <span id="a-proxima" style="color:var(--muted);font-size:.85rem;"></span>
+        </div>
+
+        <div class="linha" style="margin-top:18px;">
+          <button class="primaria" id="btn-salvar">Salvar configurações</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let clientes = [];
+let atual = null;
+const CAMPOS_PERFIL = ["oQueFaz","publico","diferenciais","precoBase","pagamento","horario","endereco","whatsapp","email","instagram","garantia","comoComecar"];
+
+function msg(texto, tipo = "ok") {
+  const el = document.getElementById("msg");
+  el.textContent = texto;
+  el.className = tipo;
+  clearTimeout(el._t);
+  el._t = setTimeout(() => (el.className = ""), 4500);
+}
+
+async function api(caminho, opts = {}) {
+  const r = await fetch(caminho, {
+    headers: { "Content-Type": "application/json" },
+    ...opts,
+    body: opts.body ? JSON.stringify(opts.body) : undefined,
+  });
+  const data = await r.json();
+  if (!r.ok) throw new Error(data.erro || "Erro inesperado");
+  return data;
+}
+
+// ---------- abas ----------
+document.querySelectorAll(".aba").forEach((b) => {
+  b.addEventListener("click", () => trocarAba(b.dataset.aba));
+});
+function trocarAba(nome) {
+  document.querySelectorAll(".aba").forEach((x) => x.classList.toggle("ativa", x.dataset.aba === nome));
+  document.querySelectorAll(".painel-aba").forEach((x) => x.classList.toggle("ativa", x.id === "aba-" + nome));
+}
+
+// ---------- clientes ----------
+async function carregarClientes() {
+  clientes = await api("/api/clientes");
+  const row = document.getElementById("clientes-row");
+  row.innerHTML = "";
+  for (const c of clientes) {
+    const chip = document.createElement("div");
+    chip.className = "chip" + (atual?.id === c.id ? " ativo" : "");
+    const cor = c.nota >= 70 ? "var(--ok)" : c.nota >= 45 ? "var(--warn)" : "var(--err)";
+    chip.innerHTML = `<span></span><span class="n" style="color:${cor}">${c.nota}</span>`;
+    chip.querySelector("span").textContent = c.nome;
+    chip.onclick = () => abrir(c.id);
+    row.appendChild(chip);
+  }
+}
+
+async function abrir(id) {
+  atual = await api("/api/clientes/" + id);
+  document.getElementById("detalhe").style.display = "block";
+  document.getElementById("d-nome").textContent = atual.nome;
+  document.getElementById("d-url").textContent = atual.url;
+  const nota = document.getElementById("d-nota");
+  nota.textContent = atual.nota + "/100";
+  nota.style.color = atual.nota >= 70 ? "var(--ok)" : atual.nota >= 45 ? "var(--warn)" : "var(--err)";
+  document.getElementById("d-kit").href = "/kit.html?url=" + encodeURIComponent(atual.url);
+  document.getElementById("d-blog").href = "/b/" + atual.id;
+
+  // perfil
+  for (const campo of CAMPOS_PERFIL) {
+    document.getElementById("p-" + campo).value = atual.perfil?.[campo] || "";
+  }
+  renderProgressoPerfil();
+
+  // config
+  document.getElementById("c-modo").value = atual.entrega.modo;
+  document.getElementById("wp-url").value = atual.entrega.wp?.url || "";
+  document.getElementById("wp-usuario").value = atual.entrega.wp?.usuario || "";
+  document.getElementById("wp-senha").value = "";
+  document.getElementById("wp-senha").placeholder = atual.entrega.wp?.temSenha ? "•••• (salva)" : "xxxx xxxx xxxx xxxx";
+  document.getElementById("t-primaria").value = atual.tema.corPrimaria;
+  document.getElementById("t-fundo").value = atual.tema.corFundo;
+  document.getElementById("t-texto").value = atual.tema.corTexto;
+  document.getElementById("a-auto").checked = atual.agenda.autoPublicar;
+  document.getElementById("a-dias").value = atual.agenda.intervaloDias;
+  document.getElementById("a-proxima").textContent = atual.agenda.proximaEm
+    ? "· próximo: " + new Date(atual.agenda.proximaEm).toLocaleString("pt-BR") : "";
+
+  mostrarConfigs();
+  renderOnboard();
+  renderPauta();
+  renderPosts();
+  carregarClientes();
+  try {
+    const { snippet } = await api(`/api/clientes/${id}/proxy-snippet`);
+    document.getElementById("proxy-snippet").textContent = snippet;
+  } catch {}
+}
+
+function perfilRespondidas() {
+  return CAMPOS_PERFIL.filter((c) => (atual.perfil?.[c] || "").trim()).length;
+}
+
+function renderProgressoPerfil() {
+  const n = perfilRespondidas();
+  document.getElementById("perfil-progresso").innerHTML =
+    `<b>${n} de ${CAMPOS_PERFIL.length}</b> perguntas respondidas — cada resposta substitui um [PREENCHA] nos posts.`;
+}
+
+// ---------- onboarding ----------
+function renderOnboard() {
+  const temPost = atual.posts.length > 0;
+  const emRevisao = atual.posts.find((p) => p.status === "needs_review");
+  const aprovado = atual.posts.find((p) => p.status === "aprovado");
+  const publicado = atual.posts.find((p) => p.status === "publicado");
+  const perfilOk = perfilRespondidas() >= 4;
+
+  const passos = [
+    { nome: "Diagnóstico", feito: true },
+    { nome: "Perfil", feito: perfilOk },
+    { nome: "Primeiro post", feito: temPost },
+    { nome: "Publicar", feito: !!publicado },
+    { nome: "Piloto automático", feito: atual.agenda.autoPublicar },
+  ];
+  const barra = document.getElementById("passos");
+  barra.innerHTML = "";
+  passos.forEach((p, i) => {
+    const el = document.createElement("span");
+    el.className = "passo " + (p.feito ? "feito" : "pendente");
+    el.textContent = `${p.feito ? "✓" : i + 1} ${p.nome}`;
+    barra.appendChild(el);
+  });
+
+  const texto = document.getElementById("proximo-texto");
+  const btn = document.getElementById("proximo-btn");
+  btn.disabled = false;
+  btn.onclick = null;
+
+  if (!perfilOk) {
+    texto.textContent = "Responda as perguntas do perfil — é o que faz os posts saírem prontos, sem lacunas.";
+    btn.textContent = "📇 Preencher perfil";
+    btn.onclick = () => { trocarAba("perfil"); document.getElementById("p-oQueFaz").focus(); };
+  } else if (!temPost) {
+    texto.textContent = "Perfil pronto! Gere o primeiro post da fila de pauta.";
+    btn.textContent = "✍️ Gerar primeiro post";
+    btn.onclick = async () => {
+      btn.disabled = true; btn.textContent = "Gerando…";
+      try { await api(`/api/clientes/${atual.id}/gerar`, { method: "POST", body: {} }); await abrir(atual.id); trocarAba("conteudo"); msg("Post gerado — revise abaixo."); }
+      catch (e) { msg(e.message, "erro"); }
+    };
+  } else if (emRevisao) {
+    texto.textContent = "Há um post aguardando revisão — aprove ou rejeite.";
+    btn.textContent = "Revisar post";
+    btn.onclick = () => { trocarAba("conteudo"); document.getElementById("lista-posts").scrollIntoView({ behavior: "smooth", block: "center" }); };
+  } else if (aprovado) {
+    texto.textContent = "Post aprovado! Publique e veja ele no ar.";
+    btn.textContent = "🚀 Publicar agora";
+    btn.onclick = async () => {
+      btn.disabled = true;
+      try {
+        const p = await api(`/api/clientes/${atual.id}/posts/${aprovado.id}/publicar`, { method: "POST", body: {} });
+        await abrir(atual.id);
+        msg("Publicado! Abrindo…");
+        if (p.link) window.open(p.link, "_blank");
+      } catch (e) { msg(e.message, "erro"); }
+    };
+  } else if (!atual.agenda.autoPublicar) {
+    texto.textContent = "Primeiro post no ar! 🎉 Ligue o piloto automático e o resto sai sozinho.";
+    btn.textContent = "⚡ Ligar piloto automático";
+    btn.onclick = async () => {
+      btn.disabled = true;
+      try {
+        await api("/api/clientes/" + atual.id, { method: "PATCH", body: { agenda: { autoPublicar: true, intervaloDias: parseInt(document.getElementById("a-dias").value, 10) || 3 } } });
+        await abrir(atual.id);
+        msg("Piloto automático ligado.");
+      } catch (e) { msg(e.message, "erro"); }
+    };
+  } else {
+    texto.textContent = "Tudo rodando no piloto automático. 🚀 " +
+      (atual.agenda.proximaEm ? "Próximo post: " + new Date(atual.agenda.proximaEm).toLocaleString("pt-BR") : "");
+    btn.textContent = "📰 Ver blog no ar";
+    btn.onclick = () => window.open("/b/" + atual.id, "_blank");
+  }
+}
+
+// ---------- conteúdo ----------
+function mostrarConfigs() {
+  const modo = document.getElementById("c-modo").value;
+  document.getElementById("cfg-wp").style.display = modo === "wordpress" ? "block" : "none";
+  document.getElementById("cfg-hospedado").style.display = modo === "wordpress" ? "none" : "block";
+}
+document.getElementById("c-modo").addEventListener("change", mostrarConfigs);
+
+function renderPauta() {
+  const el = document.getElementById("lista-pauta");
+  el.innerHTML = "";
+  const livres = atual.pauta.filter((g) => !g.usado);
+  if (!livres.length) {
+    el.innerHTML = '<span style="color:var(--muted);font-size:.9rem;">Fila vazia — todas as pautas viraram posts. 🎉</span>';
+    return;
+  }
+  for (const g of livres) {
+    const div = document.createElement("div");
+    div.className = "item";
+    div.innerHTML = `<div class="info"><b></b></div><div class="acoes"><button>✍️ Gerar post</button></div>`;
+    div.querySelector("b").textContent = g.titulo;
+    div.querySelector("button").onclick = async (e) => {
+      e.target.disabled = true; e.target.textContent = "Gerando…";
+      try { await api(`/api/clientes/${atual.id}/gerar`, { method: "POST", body: { gapId: g.id } }); msg("Post gerado — está na revisão."); abrir(atual.id); }
+      catch (err) { msg(err.message, "erro"); e.target.disabled = false; e.target.textContent = "✍️ Gerar post"; }
+    };
+    el.appendChild(div);
+  }
+}
+
+const ROTULOS = { needs_review: "revisão", aprovado: "aprovado", publicado: "publicado", rejeitado: "rejeitado" };
+
+function renderPosts() {
+  const el = document.getElementById("lista-posts");
+  el.innerHTML = "";
+  if (!atual.posts.length) {
+    el.innerHTML = '<span style="color:var(--muted);font-size:.9rem;">Nenhum post ainda — gere o primeiro na fila de pauta acima.</span>';
+    return;
+  }
+  for (const p of [...atual.posts].reverse()) {
+    const div = document.createElement("div");
+    div.className = "item";
+    const info = document.createElement("div");
+    info.className = "info";
+    info.innerHTML = `<b></b><span></span>`;
+    info.querySelector("b").textContent = p.titulo;
+    info.querySelector("span").textContent =
+      (p.publicadoEm ? "publicado " + new Date(p.publicadoEm).toLocaleString("pt-BR") + (p.canal ? " · " + p.canal : "") :
+       p.publishAt ? "agendado p/ " + new Date(p.publishAt).toLocaleString("pt-BR") :
+       "criado " + new Date(p.criadoEm).toLocaleString("pt-BR"));
+
+    const badges = document.createElement("div");
+    badges.style.cssText = "display:flex;gap:6px;align-items:center;";
+    const badge = document.createElement("span");
+    badge.className = "badge " + p.status;
+    badge.textContent = ROTULOS[p.status] || p.status;
+    badges.appendChild(badge);
+    if (p.pendencias > 0) {
+      const bp = document.createElement("span");
+      bp.className = "badge pend";
+      bp.textContent = `${p.pendencias} a preencher`;
+      bp.title = "Complete o Perfil do negócio e gere de novo para o post sair sem lacunas.";
+      badges.appendChild(bp);
+    }
+
+    const acoes = document.createElement("div");
+    acoes.className = "acoes";
+    const botao = (rotulo, fn, primaria) => {
+      const b = document.createElement("button");
+      b.textContent = rotulo;
+      if (primaria) b.className = "primaria";
+      b.onclick = fn;
+      acoes.appendChild(b);
+    };
+    const agir = (acao, body) => async () => {
+      try { await api(`/api/clientes/${atual.id}/posts/${p.id}/${acao}`, { method: "POST", body }); abrir(atual.id); }
+      catch (e) { msg(e.message, "erro"); }
+    };
+    if (p.status === "needs_review") {
+      botao("✅ Aprovar", agir("aprovar"), true);
+      botao("🗓 Agendar", async () => {
+        const quando = prompt("Publicar em (ex.: 2026-07-22 09:00):");
+        if (!quando) return;
+        const dt = new Date(quando.replace(" ", "T"));
+        if (isNaN(dt)) return msg("Data inválida.", "erro");
+        agir("aprovar", { publishAt: dt.toISOString() })();
+      });
+      botao("❌ Rejeitar", agir("rejeitar"));
+    }
+    if (p.status === "aprovado") botao("🚀 Publicar agora", agir("publicar"), true);
+    if (p.status === "publicado") {
+      const link = p.link || `/b/${atual.id}/${p.slug}`;
+      botao("🔗 Ver no ar", () => window.open(link, "_blank"), true);
+    }
+    botao("📋 MD", async () => { await navigator.clipboard.writeText(p.markdownCompleto); msg("Markdown copiado."); });
+    botao("📋 HTML", async () => { await navigator.clipboard.writeText(p.htmlCompleto); msg("HTML copiado."); });
+
+    div.appendChild(info);
+    div.appendChild(badges);
+    div.appendChild(acoes);
+    el.appendChild(div);
+  }
+}
+
+// ---------- ações ----------
+document.getElementById("btn-add").addEventListener("click", async (e) => {
+  const url = document.getElementById("nova-url").value.trim();
+  if (!url) return;
+  e.target.disabled = true; e.target.textContent = "Diagnosticando…";
+  try {
+    const c = await api("/api/clientes", { method: "POST", body: { url } });
+    document.getElementById("nova-url").value = "";
+    await carregarClientes();
+    await abrir(c.id);
+    trocarAba("perfil");
+    msg("Site adicionado! Complete o perfil para os posts saírem prontos.");
+  } catch (err) { msg(err.message, "erro"); }
+  e.target.disabled = false; e.target.textContent = "+ Adicionar site";
+});
+
+document.getElementById("btn-perfil").addEventListener("click", async (e) => {
+  e.target.disabled = true;
+  try {
+    const perfil = {};
+    for (const campo of CAMPOS_PERFIL) perfil[campo] = document.getElementById("p-" + campo).value.trim();
+    await api("/api/clientes/" + atual.id, { method: "PATCH", body: { perfil } });
+    await abrir(atual.id);
+    msg("Perfil salvo — os próximos posts já usam essas respostas.");
+  } catch (err) { msg(err.message, "erro"); }
+  e.target.disabled = false;
+});
+
+document.getElementById("btn-salvar").addEventListener("click", async () => {
+  try {
+    const body = {
+      entrega: {
+        modo: document.getElementById("c-modo").value,
+        wp: {
+          url: document.getElementById("wp-url").value.trim(),
+          usuario: document.getElementById("wp-usuario").value.trim(),
+          senha: document.getElementById("wp-senha").value.trim() || undefined,
+        },
+      },
+      tema: {
+        corPrimaria: document.getElementById("t-primaria").value,
+        corFundo: document.getElementById("t-fundo").value,
+        corTexto: document.getElementById("t-texto").value,
+      },
+      agenda: {
+        autoPublicar: document.getElementById("a-auto").checked,
+        intervaloDias: parseInt(document.getElementById("a-dias").value, 10) || 3,
+      },
+    };
+    await api("/api/clientes/" + atual.id, { method: "PATCH", body });
+    msg("Configurações salvas.");
+    abrir(atual.id);
+  } catch (e) { msg(e.message, "erro"); }
+});
+
+document.getElementById("btn-wp-testar").addEventListener("click", async (e) => {
+  e.target.disabled = true;
+  try {
+    const r = await api("/api/wp/testar", {
+      method: "POST",
+      body: {
+        url: document.getElementById("wp-url").value.trim(),
+        usuario: document.getElementById("wp-usuario").value.trim(),
+        senha: document.getElementById("wp-senha").value.trim(),
+      },
+    });
+    msg(`Conexão OK — autenticado como ${r.usuario}.`);
+  } catch (err) { msg(err.message, "erro"); }
+  e.target.disabled = false;
+});
+
+carregarClientes().then(() => {
+  const urlParam = new URLSearchParams(location.search).get("url");
+  if (urlParam) {
+    document.getElementById("nova-url").value = urlParam;
+    document.getElementById("btn-add").click();
+  } else if (clientes.length === 1) {
+    abrir(clientes[0].id);
+  }
+});
+</script>
+</body>
+</html>

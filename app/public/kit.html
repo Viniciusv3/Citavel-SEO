@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Citavel — Kit de Correção</title>
+<style>
+  :root {
+    --bg:#0b0e14; --surface:#131826; --surface-2:#1a2136; --border:#252d45;
+    --text:#e8ecf6; --muted:#8a94ad; --accent:#6c8cff; --accent-2:#9d6cff;
+    --ok:#3ecf8e; --warn:#f5b83d; --err:#f56565; --radius:14px;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:"Segoe UI",system-ui,sans-serif; line-height:1.55; }
+  .wrap { max-width:860px; margin:0 auto; padding:32px 20px 80px; }
+  .topo { display:flex; justify-content:space-between; align-items:center; margin-bottom:26px; }
+  .logo { font-size:1.3rem; font-weight:800; background:linear-gradient(90deg,var(--accent),var(--accent-2)); -webkit-background-clip:text; background-clip:text; color:transparent; text-decoration:none; }
+  .voltar { color:var(--muted); text-decoration:none; font-size:.88rem; }
+  h1 { font-size:1.5rem; margin-bottom:6px; }
+  .sub { color:var(--muted); margin-bottom:28px; font-size:.95rem; }
+
+  #loading { text-align:center; padding:80px 0; color:var(--muted); }
+  .spinner { width:42px; height:42px; margin:0 auto 16px; border-radius:50%; border:3px solid var(--border); border-top-color:var(--accent); animation:spin .8s linear infinite; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  #erro { display:none; background:rgba(245,101,101,.08); border:1px solid rgba(245,101,101,.35); color:#ffb4b4; padding:14px 18px; border-radius:var(--radius); }
+
+  .item { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:22px; margin-bottom:16px; }
+  .item .cab { display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:8px; }
+  .item h2 { font-size:1.05rem; }
+  .prio { font-size:.68rem; font-weight:700; letter-spacing:1px; padding:3px 10px; border-radius:99px; text-transform:uppercase; }
+  .prio.alta { background:rgba(245,101,101,.12); border:1px solid rgba(245,101,101,.4); color:var(--err); }
+  .prio.media { background:rgba(245,184,61,.12); border:1px solid rgba(245,184,61,.4); color:var(--warn); }
+  .prio.ok { background:rgba(62,207,142,.12); border:1px solid rgba(62,207,142,.4); color:var(--ok); }
+  .item .porque { color:var(--muted); font-size:.9rem; margin-bottom:6px; }
+  .item .onde { font-size:.82rem; color:var(--accent); margin-bottom:12px; }
+  pre {
+    background:var(--surface-2); border:1px solid var(--border); border-radius:10px;
+    padding:16px; font-size:.78rem; overflow-x:auto; white-space:pre; line-height:1.5;
+  }
+  pre .preencha { color:var(--warn); font-weight:700; }
+  .copiar { margin-top:10px; background:var(--surface-2); border:1px solid var(--border); color:var(--text); padding:9px 16px; border-radius:10px; font-size:.85rem; font-weight:600; cursor:pointer; }
+  .copiar:hover { border-color:var(--accent); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topo">
+    <a class="logo" href="/">Citavel</a>
+    <a class="voltar" id="voltar" href="/">&larr; voltar ao diagnóstico</a>
+  </div>
+
+  <div id="loading"><div class="spinner"></div>Montando o kit de correção…</div>
+  <div id="erro"></div>
+
+  <div id="conteudo" style="display:none;">
+    <h1>🔧 Kit de Correção — <span id="k-site"></span></h1>
+    <p class="sub">Códigos prontos para colar, gerados a partir do seu site. Os trechos
+      <span style="color:var(--warn);font-weight:700;">[PREENCHA]</span> pedem dados que só você tem.
+      Blog resolve conteúdo; isto aqui resolve o resto.</p>
+    <div id="itens"></div>
+  </div>
+</div>
+
+<script>
+const params = new URLSearchParams(location.search);
+const url = params.get("url");
+document.getElementById("voltar").href = "/?url=" + encodeURIComponent(url || "");
+
+async function carregar() {
+  if (!url) return mostraErro("Informe a URL: /kit.html?url=seusite.com");
+  try {
+    const r = await fetch("/api/kit?url=" + encodeURIComponent(url));
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.erro || "Erro inesperado");
+    render(data);
+  } catch (e) { mostraErro(e.message); }
+}
+
+function mostraErro(m) {
+  document.getElementById("loading").style.display = "none";
+  const el = document.getElementById("erro");
+  el.textContent = "⚠️ " + m;
+  el.style.display = "block";
+}
+
+const PRIO = { alta: "corrigir agora", media: "recomendado", ok: "já está ok — referência" };
+
+function render(kit) {
+  document.getElementById("k-site").textContent = kit.site;
+  const cont = document.getElementById("itens");
+  // itens com problema primeiro
+  const ordem = { alta: 0, media: 1, ok: 2 };
+  for (const item of [...kit.itens].sort((a, b) => ordem[a.prioridade] - ordem[b.prioridade])) {
+    const div = document.createElement("div");
+    div.className = "item";
+    div.innerHTML = `
+      <div class="cab"><h2></h2><span class="prio ${item.prioridade}">${PRIO[item.prioridade]}</span></div>
+      <div class="porque"></div>
+      <div class="onde"></div>
+      <pre></pre>
+      <button class="copiar">📋 Copiar código</button>`;
+    div.querySelector("h2").textContent = item.titulo;
+    div.querySelector(".porque").textContent = item.porque;
+    div.querySelector(".onde").textContent = "📍 " + item.onde;
+    const pre = div.querySelector("pre");
+    pre.textContent = item.codigo;
+    pre.innerHTML = pre.innerHTML.replace(/\[PREENCHA:([^\]]*)\]/g, '<span class="preencha">[PREENCHA:$1]</span>');
+    div.querySelector(".copiar").addEventListener("click", async (e) => {
+      await navigator.clipboard.writeText(item.codigo);
+      e.target.textContent = "✅ Copiado!";
+      setTimeout(() => (e.target.textContent = "📋 Copiar código"), 2000);
+    });
+    cont.appendChild(div);
+  }
+  document.getElementById("loading").style.display = "none";
+  document.getElementById("conteudo").style.display = "block";
+}
+
+carregar();
+</script>
+</body>
+</html>

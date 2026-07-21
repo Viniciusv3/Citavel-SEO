@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Citavel — Post gerado</title>
+<style>
+  :root {
+    --bg: #0b0e14; --surface: #131826; --surface-2: #1a2136; --border: #252d45;
+    --text: #e8ecf6; --muted: #8a94ad; --accent: #6c8cff; --accent-2: #9d6cff;
+    --ok: #3ecf8e; --warn: #f5b83d; --radius: 14px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg); color: var(--text); line-height: 1.6;
+    font-family: "Segoe UI", system-ui, sans-serif;
+  }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 36px 20px 80px; }
+  .topo { display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px; flex-wrap: wrap; gap: 12px; }
+  .logo {
+    font-size: 1.3rem; font-weight: 800;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    text-decoration: none;
+  }
+  .voltar { color: var(--muted); text-decoration: none; font-size: .88rem; }
+  .voltar:hover { color: var(--text); }
+
+  #loading { text-align: center; padding: 80px 0; color: var(--muted); }
+  .spinner {
+    width: 42px; height: 42px; margin: 0 auto 16px; border-radius: 50%;
+    border: 3px solid var(--border); border-top-color: var(--accent);
+    animation: spin .8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  #erro { display: none; background: rgba(245,101,101,.08); border: 1px solid rgba(245,101,101,.35);
+    color: #ffb4b4; padding: 14px 18px; border-radius: var(--radius); }
+
+  #conteudo { display: none; }
+  .cab {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 22px 24px; margin-bottom: 18px;
+  }
+  .cab .rotulo { font-size: .72rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); }
+  .cab .pauta { margin-top: 6px; font-size: 1.02rem; }
+  .motor {
+    display: inline-block; margin-top: 12px; font-size: .74rem; font-weight: 700;
+    padding: 4px 12px; border-radius: 99px; letter-spacing: .5px;
+  }
+  .motor.template { background: rgba(245,184,61,.12); border: 1px solid rgba(245,184,61,.4); color: var(--warn); }
+  .motor.ia { background: rgba(62,207,142,.12); border: 1px solid rgba(62,207,142,.4); color: var(--ok); }
+
+  .acoes { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 24px; }
+  .acoes button {
+    background: var(--surface); border: 1px solid var(--border); color: var(--text);
+    font-size: .9rem; padding: 11px 18px; font-weight: 600; border-radius: var(--radius); cursor: pointer;
+  }
+  .acoes button:hover { border-color: var(--accent); }
+  .acoes button.primaria {
+    background: linear-gradient(90deg, var(--accent), var(--accent-2)); border: none; color: #fff;
+  }
+
+  .meta-box {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 16px 20px; margin-bottom: 24px; font-size: .9rem;
+  }
+  .meta-box b { color: var(--muted); font-size: .74rem; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 2px; }
+  .meta-box div + b { margin-top: 12px; }
+
+  .preview {
+    background: #fff; color: #1c2333; border-radius: var(--radius);
+    padding: 44px 48px; font-family: Georgia, "Times New Roman", serif;
+  }
+  .preview h1 { font-size: 1.9rem; line-height: 1.25; margin-bottom: 18px; }
+  .preview h2 { font-size: 1.35rem; margin: 28px 0 10px; }
+  .preview h3 { font-size: 1.08rem; margin: 20px 0 8px; }
+  .preview p { margin-bottom: 12px; }
+  .preview ul { margin: 0 0 14px 22px; }
+  .preview li { margin-bottom: 6px; }
+  .preview .preencha { background: #fff3cd; color: #7a5c00; padding: 0 4px; border-radius: 3px; }
+  @media (max-width: 560px) { .preview { padding: 28px 20px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topo">
+    <a class="logo" href="/">Citavel</a>
+    <a class="voltar" id="voltar" href="/">&larr; voltar ao diagnóstico</a>
+  </div>
+
+  <div id="loading">
+    <div class="spinner"></div>
+    <div id="loading-msg">Gerando o post…</div>
+  </div>
+  <div id="erro"></div>
+
+  <div id="conteudo">
+    <div class="cab">
+      <div class="rotulo">Pauta</div>
+      <div class="pauta" id="pauta-titulo"></div>
+      <span class="motor" id="motor"></span>
+    </div>
+
+    <div class="acoes">
+      <button class="primaria" id="copiar-md">📋 Copiar Markdown</button>
+      <button id="copiar-html">📋 Copiar HTML (com FAQ schema)</button>
+      <button id="baixar">⬇️ Baixar .html</button>
+    </div>
+
+    <div class="meta-box">
+      <b>Título (SEO)</b><div id="m-titulo"></div>
+      <b>Meta description</b><div id="m-desc"></div>
+      <b>Slug sugerido</b><div id="m-slug"></div>
+    </div>
+
+    <div class="preview" id="preview"></div>
+  </div>
+</div>
+
+<script>
+const params = new URLSearchParams(location.search);
+const url = params.get("url");
+const gapId = params.get("gap");
+document.getElementById("voltar").href = "/?url=" + encodeURIComponent(url || "");
+let post = null;
+
+async function carregar() {
+  if (!url || !gapId) {
+    mostraErro("Link inválido — volte ao diagnóstico e clique em uma pauta.");
+    return;
+  }
+  try {
+    const r = await fetch("/api/post", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ url, gapId }),
+    });
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.erro || "Erro inesperado");
+    render(data);
+  } catch (e) {
+    mostraErro(e.message);
+  }
+}
+
+function mostraErro(msg) {
+  document.getElementById("loading").style.display = "none";
+  const el = document.getElementById("erro");
+  el.textContent = "⚠️ " + msg;
+  el.style.display = "block";
+}
+
+function render(data) {
+  post = data;
+  document.getElementById("pauta-titulo").textContent = data.gap.titulo;
+  const motor = document.getElementById("motor");
+  if (data.motor === "ia") {
+    motor.className = "motor ia";
+    motor.textContent = "✨ Escrito por IA (Haiku + Sonnet)";
+  } else {
+    motor.className = "motor template";
+    motor.textContent = "📐 Rascunho estruturado — os campos [PREENCHA] pedem seus dados. Com a API de IA configurada, o texto sai completo.";
+  }
+  document.getElementById("m-titulo").textContent = data.titulo;
+  document.getElementById("m-desc").textContent = data.metaDescription;
+  document.getElementById("m-slug").textContent = "/" + data.slug;
+
+  // preview: destaca os marcadores [PREENCHA: ...]
+  const html = data.htmlCompleto
+    .replace(/<script[\s\S]*?<\/script>/g, "")
+    .replace(/\[PREENCHA:([^\]]*)\]/g, '<span class="preencha">[PREENCHA:$1]</span>');
+  document.getElementById("preview").innerHTML = html;
+
+  document.getElementById("loading").style.display = "none";
+  document.getElementById("conteudo").style.display = "block";
+}
+
+async function copiar(botao, texto, rotulo) {
+  await navigator.clipboard.writeText(texto);
+  const original = botao.textContent;
+  botao.textContent = "✅ Copiado!";
+  setTimeout(() => (botao.textContent = original), 2000);
+}
+
+document.getElementById("copiar-md").addEventListener("click", (e) => {
+  if (post) copiar(e.target, post.markdownCompleto);
+});
+document.getElementById("copiar-html").addEventListener("click", (e) => {
+  if (post) copiar(e.target, post.htmlCompleto);
+});
+document.getElementById("baixar").addEventListener("click", () => {
+  if (!post) return;
+  const blob = new Blob([post.htmlCompleto], { type: "text/html;charset=utf-8" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = post.slug + ".html";
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+
+carregar();
+</script>
+</body>
+</html>
