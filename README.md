@@ -1,4 +1,4 @@
-# Citavel — protótipo funcional (todas as fases)
+TESTESTESTES # Citavel — protótipo funcional (todas as fases)
 
 Diagnóstico SEO / AEO / GEO grátis + geração e publicação automática de posts.
 Implementa as Fases A, B e C/3.4 do [PLANO.md](PLANO.md) e a automação da seção 4.
